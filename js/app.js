@@ -10,8 +10,9 @@ function productInfo(data){
     $.each(data.items,function(i, item){
         console.log(item);
         var cart = $('.cart');
-
-        cart.append("<li>" + item.name + "</li>");
+        var html = "<li><div class='productInfo'>" + item.name + "</div><div class='price'>";
+        var price = item.salePrice +  "</div></li>";
+        cart.append(html + price);
     })
 }
 

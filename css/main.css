@@ -1,0 +1,15 @@
+.productInfo {
+    float: left;
+    margin-right: 2%;
+    width: 80%;
+}
+
+.price {
+    float: right;
+    margin-right: 0;
+}
+
+ul {
+    margin-left: 0;
+    padding-left: 0;
+}
