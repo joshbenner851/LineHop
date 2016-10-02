@@ -7,20 +7,58 @@ var walmartApiUrl = "http://api.walmartlabs.com/v1/items?callback=?";
 var upcValidLengths = [5,6,12];
 var virtualCart = [];
 var bill = 0;
+var paid = false;
+//used for
+var costcoID = "57cf75cea73e494d8675f2b1";
+var joshAcctId = "57ddf498e63c5995587e8d66";
+var capitalOneURL2 = "http://api.reimaginebanking.com/accounts/";
+var capitalOneKey = "04e7f8ab2d8b74d58ea9f870c4246949";
+var capitalOneURL = "http://api.reimaginebanking.com/accounts/" + joshAcctId  + "/purchases?key=" + capitalOneKey;
+var itemToBeDeleted;
+
+function deleteItem(){
+    console.log(itemToBeDeleted);
+}
 
 function productInfo(data){
     $.each(data.items,function(i, item){
         console.log(item);
         var cart = $('.cart');
-        var html = "<li><div class='productInfo'>" + item.name + "</div><div class='price'>";
+        itemToBeDeleted = item;
+        var html = "<li><button onclick='deleteItem()'>Delete</button><div class='productInfo'>" + item.name + "</div><div class='price'>";
         var price = item.salePrice +  "</div></li>";
         cart.append(html + price);
         virtualCart.push(item);
 		bill += item.salePrice;
+        console.log("Printing the item list" , virtualCart);
+    })
+}
+
+function payCallBack(data){
+     $.each(data.items,function(i, item){
+        console.log(item);
+        console.log("payment successful");
     })
 }
 
 $( document ).ready(function() {
+
+    if(paid){
+            $(this).removeClass('btn-primary');
+            $(this).addClass('btn-success');
+            $(this ).text("Paid");
+            $('.InputData' ).css('visibility','hidden');
+        }
+
+
+    //TODO Add functionality for submitting through hitting enter instead of having to click button
+//    $("input").keypress(function(event) {
+//    if (event.which == 13) {
+//        event.preventDefault();
+//        $("form").submit();
+//    }
+//});
+
 
     $('.addItem' ).click(function(){
         var item = $('.UPC' ).val();
@@ -31,16 +69,37 @@ $( document ).ready(function() {
             format: "json",
             upc: item
         };
-
         $.getJSON(walmartApiUrl, options, productInfo);
-
-
     });
 
     $('.checkout' ).click(function(){
+        var capitalOneOptions = {
+            "body": {
+                "merchant_id" : costcoID,
+                "medium" : "balance",
+                "purchase_date" : "2016-10-02",
+                "amount" : 250,
+                "description" : "food"
+            }
+        };
+       // $.getJSON(capitalOneURL,capitalOneOptions,payCallBack );
+       // $.ajax(capitalOneURL,{
+       //     "data": capitalOneOptions,
+       //     "type": "POST",
+       //     'contentType': 'application/json'
+       // });
 
-        $(this).removeClass('btn-primary');
-        $(this).addClass('btn-success');
+        $.post(capitalOneURL, capitalOneOptions, function(response) {
+            // Do something with the request
+            console.log(response);
+        }, 'json');
 
+        //paid = true;
+        //if(paid){
+        //    $(this).removeClass('btn-primary');
+        //    $(this).addClass('btn-success');
+        //    $(this ).text("Paid");
+        //    $('.InputData' ).css('visibility','hidden');
+        //}
     });
 });
