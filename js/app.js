@@ -39,7 +39,7 @@ function productInfo(data){
         };
         $.getJSON(openFoodFactsUrl + item.upc,openFoodOptions,image ).done(function(resp){
             var a = resp;
-            var html = "<li><button onclick='deleteItem()'>Delete</button><img src='" + resp.product.image_url + "'><div class='productInfo'>" + item.name + "</div><div class='price'>";
+            var html = "<li><img src='" + resp.product.image_url + "'><div class='productInfo'>" + item.name + "</div><div class='price'>";
             var price = item.salePrice +  "</div></li>";
             cart.append(html + price);
             virtualCart.push(item);
