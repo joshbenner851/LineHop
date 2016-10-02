@@ -103,6 +103,10 @@ function remove(){
 
 $( document ).ready(function() {
 
+    $('.walmart' ).click(function(){
+        $('.stores' ).hide();
+    });
+
     if(paid){
            hideInfo();
     }

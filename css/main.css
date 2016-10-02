@@ -63,3 +63,14 @@ label{
 .sponsor{
     float: left;
 }
+
+
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.storePics li {
+    display: inline;
+}
