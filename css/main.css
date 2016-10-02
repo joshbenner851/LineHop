@@ -35,10 +35,27 @@ img { max-height: 83px;
     max-width: 200px;
 }
 
+.logo{
+    max-width: none;
+}
+
 h1{
-    padding-left: 40%;
+    margin-left: 38%;
 }
 
 h2 {
         padding-left: 35%;
+}
+
+#UPC{
+    margin-right: 10px;
+}
+
+.removeBtn {
+    float: left;
+}
+
+
+label{
+     margin-right: 10px;
 }

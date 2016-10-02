@@ -17,6 +17,7 @@ var capitalOneURL = "http://api.reimaginebanking.com/accounts/" + joshAcctId  + 
 var itemToBeDeleted;
 var openFoodFactsUrl = "http://world.openfoodfacts.org/api/v0/product/";
 var currentImage = "";
+var isRemove = false;
 var url = "http://api.reimaginebanking.com/accounts/57ddf498e63c5995587e8d66/purchases?key=04e7f8ab2d8b74d58ea9f870c4246949";
 function deleteItem(){
     console.log(itemToBeDeleted);
@@ -80,6 +81,26 @@ function hideInfo(){
     $('.InputData' ).css('visibility','hidden');
 }
 
+function remove(){
+    var itemCode = $('.UPC').val();
+        console.log(itemCode);
+        for(var i = 0; i < virtualCart.length; i++)
+        {
+            if(virtualCart[i].upc == itemCode)
+            {
+                bill -= virtualCart[i].salePrice;
+                console.log(virtualCart[i]);
+                var cart = $('.cart');
+                var html = "<li><div class='productInfo'>" + virtualCart[i].name + "</div><div class='price'>";
+                var price = (-1*virtualCart[i].salePrice) +  "</div></li>";
+                cart.append(html + price);
+                virtualCart.splice(i,1);
+                return;
+            }
+        }
+        alert("No such item in list");
+}
+
 $( document ).ready(function() {
 
     if(paid){
@@ -89,37 +110,38 @@ $( document ).ready(function() {
     $("input").keypress(function(event) {
     if (event.which == 13) {
         event.preventDefault();
-        addItemToDatabase();
+        if(isRemove){
+            remove();
+        }
+        else{
+            addItemToDatabase();
+        }
     }
 });
 
     $('.addItem' ).click(function(){
-        addItemToDatabase();
+        if(isRemove){
+            remove();
+        }
+        else{
+            addItemToDatabase();
+        }
     });
 
-    $('.removeItem').click(function(){
-	var itemCode = $('.Upc').val();
-	console.log(itemCode);
+    $('.removeBtn').click(function(){
+        isRemove = !isRemove;
+        $(this).css("background-color","black");
+        $('.addItem' ).text("Add Item to Cart");
+        if(isRemove){
+            $('.addItem' ).text("Delete Item");
+            $('.removeBtn' ).css("background-color","red");
+            //remove();
+        }
 
-	for(var i = 0; i < virtualCart.length; i++)
-	{
-		if(virtualCart[i].upc == itemCode)
-		{
-			bill -= virtualCart[i].salePrice;
-			console.log(virtualCart[i]);
-			var cart = $('.cart');
-			var html = "<li><div class='productInfo'>" + virtualCart[i].name + "</div><div class='price'>";
-			var price = (-1*virtualCart[i].salePrice) +  "</div></li>";
-			cart.append(html + price);
-			virtualCart.splice(i,1);
-			return;
-		}
-	}
-	alert("No such item in list");
-	console.log("Invalid removal");
     });
 
     $('.checkout' ).click(function(){
+        isRemove = false;
         var capitalOneOptions = {
               "merchant_id": "57cf75cea73e494d8675f2b1",
               "medium": "balance",
