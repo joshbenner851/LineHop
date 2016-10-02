@@ -5,6 +5,8 @@
 
 var walmartApiUrl = "http://api.walmartlabs.com/v1/items?callback=?";
 var upcValidLengths = [5,6,12];
+var virtualCart = [];
+var bill = 0;
 
 function productInfo(data){
     $.each(data.items,function(i, item){
@@ -13,6 +15,8 @@ function productInfo(data){
         var html = "<li><div class='productInfo'>" + item.name + "</div><div class='price'>";
         var price = item.salePrice +  "</div></li>";
         cart.append(html + price);
+        virtualCart.push(item);
+		bill += item.salePrice;
     })
 }
 
