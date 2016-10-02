@@ -98,7 +98,7 @@ function remove(){
                 return;
             }
         }
-        alert("No such item in list");
+        $('.errorMsg' ).text('That item does not exist' ).css('color','red');
 }
 
 $( document ).ready(function() {
