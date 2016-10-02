@@ -22,3 +22,23 @@ body{
 input {
     color: #000;
 }
+
+.panel {
+    background-color: #246959;
+    min-height: 20em;
+    border-color: #000;
+    border: 2px solid;
+    padding-right: 2em;
+}
+
+img { max-height: 83px;
+    max-width: 200px;
+}
+
+h1{
+    padding-left: 40%;
+}
+
+h2 {
+        padding-left: 35%;
+}

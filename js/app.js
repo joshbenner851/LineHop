@@ -17,14 +17,15 @@ var capitalOneURL = "http://api.reimaginebanking.com/accounts/" + joshAcctId  + 
 var itemToBeDeleted;
 var openFoodFactsUrl = "http://world.openfoodfacts.org/api/v0/product/";
 var currentImage = "";
+var url = "http://api.reimaginebanking.com/accounts/57ddf498e63c5995587e8d66/purchases?key=04e7f8ab2d8b74d58ea9f870c4246949";
 function deleteItem(){
     console.log(itemToBeDeleted);
 }
 
 function image(data){
     $.each(data.items,function(i, item) {
-         currentImage = item.image_url;
-        console.log(item.image_url);
+         currentImage = item.image_small_url;
+        console.log(item.image_small_url);
     });
 }
 
@@ -35,11 +36,11 @@ function productInfo(data){
         itemToBeDeleted = item;
 
         var openFoodOptions = {
-            format: "json",
+            format: "json"
         };
         $.getJSON(openFoodFactsUrl + item.upc,openFoodOptions,image ).done(function(resp){
             var a = resp;
-            var html = "<li><button onclick='deleteItem()'>Delete</button><img src='" + resp.product.image_url + "'><div class='productInfo'>" + item.name + "</div><div class='price'>";
+            var html = "<li><img src='" + resp.product.image_small_url + "'><div class='productInfo'>" + item.name + "</div><div class='price'>";
             var price = item.salePrice +  "</div></li>";
             cart.append(html + price);
             virtualCart.push(item);
@@ -120,27 +121,30 @@ $( document ).ready(function() {
 
     $('.checkout' ).click(function(){
         var capitalOneOptions = {
-            "body": {
-                "merchant_id" : costcoID,
-                "medium" : "balance",
-                "purchase_date" : "2016-10-02",
-                "amount" : 250,
-                "description" : "food"
-            }
+              "merchant_id": "57cf75cea73e494d8675f2b1",
+              "medium": "balance",
+              "purchase_date": "2016-10-02",
+              "amount": 6969,
+              "description": "dank food"
         };
        // $.getJSON(capitalOneURL,capitalOneOptions,payCallBack );
-       // $.ajax(capitalOneURL,{
-       //     "data": capitalOneOptions,
-       //     "type": "POST",
-       //     'contentType': 'application/json'
-       // });
+        $.ajax({
+            type: "POST",
+            data: capitalOneOptions,
+            url: capitalOneURL,
+            crossDomain: true,
+            dataType: "jsonp",
+            headers:{
+                "Cross-Origin": true,
+                "Content-Type": "application/json",
+                "X-M2X-KEY": "83ffdd46ec1f3a278c0188dc034784d7",
+                'X-Flynn': 'lives'
+            }
 
-        $.post(capitalOneURL, capitalOneOptions, function(response) {
-            // Do something with the request
-            console.log(response);
-        }, 'json');
-	    //console.log(virtualCart);
-	    //console.log(bill);
+        } ).done(function(resp){
+            console.log(resp);
+        } );
+
 	    $('.cart').append("<li><div class='productInfo'>BILL</div><div class='price'>\n" + bill.toFixed(2) + "</div></li>");
         hideInfo();
     });
