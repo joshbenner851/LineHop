@@ -15,9 +15,17 @@ var capitalOneURL2 = "http://api.reimaginebanking.com/accounts/";
 var capitalOneKey = "04e7f8ab2d8b74d58ea9f870c4246949";
 var capitalOneURL = "http://api.reimaginebanking.com/accounts/" + joshAcctId  + "/purchases?key=" + capitalOneKey;
 var itemToBeDeleted;
-
+var openFoodFactsUrl = "http://world.openfoodfacts.org/api/v0/product/";
+var currentImage = "";
 function deleteItem(){
     console.log(itemToBeDeleted);
+}
+
+function image(data){
+    $.each(data.items,function(i, item) {
+         currentImage = item.image_url;
+        console.log(item.image_url);
+    });
 }
 
 function productInfo(data){
@@ -25,12 +33,21 @@ function productInfo(data){
         console.log(item);
         var cart = $('.cart');
         itemToBeDeleted = item;
-        var html = "<li><button onclick='deleteItem()'>Delete</button><div class='productInfo'>" + item.name + "</div><div class='price'>";
-        var price = item.salePrice +  "</div></li>";
-        cart.append(html + price);
-        virtualCart.push(item);
-		bill += item.salePrice;
-        console.log("Printing the item list" , virtualCart);
+
+        var openFoodOptions = {
+            format: "json",
+        };
+        $.getJSON(openFoodFactsUrl + item.upc,openFoodOptions,image ).done(function(resp){
+            var a = resp;
+            var html = "<li><button onclick='deleteItem()'>Delete</button><img src='" + resp.product.image_url + "'><div class='productInfo'>" + item.name + "</div><div class='price'>";
+            var price = item.salePrice +  "</div></li>";
+            cart.append(html + price);
+            virtualCart.push(item);
+            bill += item.salePrice;
+            console.log("Printing the item list" , virtualCart);
+        });
+
+
     })
 }
 
@@ -41,27 +58,8 @@ function payCallBack(data){
     })
 }
 
-$( document ).ready(function() {
-
-    if(paid){
-            $(this).removeClass('btn-primary');
-            $(this).addClass('btn-success');
-            $(this ).text("Paid");
-            $('.InputData' ).css('visibility','hidden');
-        }
-
-
-    //TODO Add functionality for submitting through hitting enter instead of having to click button
-//    $("input").keypress(function(event) {
-//    if (event.which == 13) {
-//        event.preventDefault();
-//        $("form").submit();
-//    }
-//});
-
-
-    $('.addItem' ).click(function(){
-        var item = $('.UPC' ).val();
+function addItemToDatabase(){
+     var item = $('.UPC' ).val();
         console.log(item);
         var options =
         {
@@ -71,8 +69,31 @@ $( document ).ready(function() {
         };
 
         $.getJSON(walmartApiUrl, options, productInfo);
+}
 
+function hideInfo(){
+    var btn = $('.checkout');
+    btn.removeClass('btn-primary');
+    btn.addClass('btn-success');
+    btn.text("Paid");
+    $('.InputData' ).css('visibility','hidden');
+}
 
+$( document ).ready(function() {
+
+    if(paid){
+           hideInfo();
+    }
+
+    $("input").keypress(function(event) {
+    if (event.which == 13) {
+        event.preventDefault();
+        addItemToDatabase();
+    }
+});
+
+    $('.addItem' ).click(function(){
+        addItemToDatabase();
     });
 
     $('.removeItem').click(function(){
@@ -118,18 +139,9 @@ $( document ).ready(function() {
             // Do something with the request
             console.log(response);
         }, 'json');
-	console.log(virtualCart);
-	console.log(bill);
-	$('.cart').append("<li><div class='productInfo'>BILL</div><div class='price'>\n" + bill.toFixed(2) + "</div></li>");
-	$(this).removeClass('btn-primary');
-        $(this).addClass('btn-success');
-
-        //paid = true;
-        //if(paid){
-        //    $(this).removeClass('btn-primary');
-        //    $(this).addClass('btn-success');
-        //    $(this ).text("Paid");
-        //    $('.InputData' ).css('visibility','hidden');
-        //}
+	    //console.log(virtualCart);
+	    //console.log(bill);
+	    $('.cart').append("<li><div class='productInfo'>BILL</div><div class='price'>\n" + bill.toFixed(2) + "</div></li>");
+        hideInfo();
     });
 });
